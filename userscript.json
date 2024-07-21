@@ -1,0 +1,58 @@
+// ==UserScript==
+// @name         Win A Dinner
+// @namespace    Violentmonkey Scripts
+// @version      0.1 Alpha
+// @description  Win A Dinner Accessibility Support
+// @author       Gem
+// @match        https://*.winadinner.com/*
+// @grant        none
+// @license      MIT
+// @icon         https://winadinner.com/app/themes/winadinner-2.0/dist/images/common/logo-picto.svg
+// ==/UserScript==
+
+//Added alphabetical order
+
+(function() {
+    'use strict';
+
+    // Create the CSS box for the winners list
+    var cssBox = document.createElement('div');
+    cssBox.style.display = 'grid';
+    cssBox.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))'; // Adjust columns as needed
+    cssBox.style.gap = '10px';
+    cssBox.style.backgroundColor = 'white';
+    cssBox.style.border = '1px solid black';
+    cssBox.style.padding = '10px';
+    cssBox.style.marginBottom = '20px';
+
+    // Create the Header
+    var header = document.createElement('div');
+    header.textContent = '⭐ Congratulations!';
+    header.style.gridColumn = '1 / -1'; // Make the header span all columns
+    header.style.fontWeight = 'bold';
+    header.style.marginBottom = '10px';
+
+    // Add the header to the CSS box
+    cssBox.appendChild(header);
+
+    // Extract text from all p.name elements
+    var names = Array.from(document.querySelectorAll('p.name'));
+
+    // Sort the names alphabetically
+    names.sort((a, b) => a.innerText.localeCompare(b.innerText));
+
+    // Create the WinnersList
+    names.forEach(function(p) {
+        var listItem = document.createElement('div');
+        listItem.textContent = p.innerText;
+        cssBox.appendChild(listItem);
+    });
+
+    // Insert the CSS box above the div with class "alert alert-warning"
+    var alertDiv = document.querySelector('.alert.alert-warning');
+    if (alertDiv) {
+        alertDiv.parentNode.insertBefore(cssBox, alertDiv);
+    } else {
+        console.log('Alert div not found.');
+    }
+})();
